@@ -19,7 +19,7 @@
 
 
     <div class="row">
-        <%bookList.forEach(function(book){%>
+        <% bookList.forEach(function(book, i){ %>
 
             <div class="card" style="width: 20rem; margin: 8px;">
                 <div class="card-body">
@@ -30,16 +30,34 @@
                     <p class="card-text">
                         <%=book.description%>
                     </p>
-                    <h6 class="card-subtitle mb-2 text-muted">Genre:
-                        <%=book.genre%>
+                    <h6 class="card-subtitle mb-2 text-muted">Genre: <%= book.genre %>
                     </h6>
+                    
+
+
+
+
+
+
+
                     <a href="/books/edit/<%=book._id%>" class="card-link">Edit</a>
-                    <a href="/books/delete/<%=book._id%>" class="card-link">Delete</a>
+                    <a href="/books/remove/<%=book._id%>" class="card-link">Delete</a>
                 </div>
             </div>
             <%})%>
 
     </div>
+
+
+    <script>
+        // Check if there's a redirectUrl provided in the template
+        const redirectUrl = "<%= typeof redirectUrl !== 'undefined' ? redirectUrl : '' %>";
+        if (redirectUrl) {
+          // Update the URL and load the new page
+          window.location.href = redirectUrl;
+        }
+      </script>
+    
 
 
 

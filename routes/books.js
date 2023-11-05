@@ -1,41 +1,40 @@
 var express = require('express');
+const Book = require('../models/book')
 var router = express.Router();
-var books = require('../resources/books')
 
-/* GET home page. */
-router.get('/add', function(req, res, next) { //get req to display
-    res.render('addBooks', { title: 'Add Books' }); //ejs index content
+router.get('/add', function (req, res, next) {
+  res.render('addBooks', {
+    title: 'Add book',
+  });
+})
+
+router.post('/save', async function (req, res) {
+  await Book.insertMany([req.body])
+  res.redirect('/');
+})
+
+router.get(`/remove/:_id`, async function (req, res) {
+  console.log(req.params._id);
+  await Book.findOneAndDelete({ _id: req.params._id }); // Use findOneAndDelete
+  const books = await Book.find();
+  res.render('index', { title: 'Book App', bookList: books, redirectUrl: '/' });
 });
 
 
-router.post('/save', function(req, res, next) {
-    books.push({...req.body, _id: `00${(books.length+1)}` })
-    res.redirect('/')
+router.get('/edit/:_id', async function (req, res) {
+  console.log(req.params._id);
+  const book = await Book.findOne({ _id: req.params._id });
+  res.render('editBooks', {
+    title: "Edit Book",
+    book
+  })
 })
 
-router.get('/edit/:_id', function(req, res, next) {
-    const book = books.find((book) => book._id == req.params._id)
-    console.log(book)
-    res.render('editBooks', { title: "Edit Books", book: book })
-
+// Ask fellows to do this
+router.post('/edit/:_id', async function (req, res) {
+  await Book.findOneAndUpdate({ _id: req.params._id }, { ...req.body })
+  res.redirect('/');
 })
-router.post('/saveEdited/:_id', function(req, res, next) {
-    const currIndex = books.findIndex((book) => book._id === req.params._id)
-    books.splice(currIndex, 1, {...req.body, _id: req.params._id })
-    res.redirect('/')
-})
-
-
-
-
-router.get('/delete/:_id', function(req, res, next) {
-    res.render('deleteBooks', { title: "Delete Books" })
-
-})
-
-
-
-
 
 
 module.exports = router;
